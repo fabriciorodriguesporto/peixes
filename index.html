@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123c38">
+  <meta name="description" content="Guia interativo de peixes da Lagoa do Sombrio, em Santa Catarina, com identificação, habitat e dicas de pesca responsável.">
+  <title>Guia de Peixes - Lagoa do Sombrio (SC)</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #19332f;
+      --muted: #64736d;
+      --green: #16483e;
+      --green-dark: #103b35;
+      --teal: #176e70;
+      --sand: #f5f3eb;
+      --paper: #fffefa;
+      --line: #e4e8df;
+      --shadow: 0 16px 42px rgba(20, 54, 46, .10);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--sand);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      background:
+        radial-gradient(ellipse at 82% 10%, rgba(119, 190, 151, .22), transparent 28rem),
+        linear-gradient(122deg, #103b35 0%, #14544c 58%, #176e70 100%);
+    }
+    .hero::after {
+      position: absolute;
+      right: -9rem;
+      bottom: -19rem;
+      width: 43rem;
+      height: 29rem;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 50%;
+      box-shadow: 0 0 0 2.4rem rgba(255,255,255,.035), 0 0 0 5rem rgba(255,255,255,.025);
+      content: "";
+      transform: rotate(-12deg);
+      pointer-events: none;
+    }
+    .hero-inner, main, footer { width: min(1160px, calc(100% - 40px)); margin-inline: auto; }
+    .hero-inner { position: relative; z-index: 1; padding: 58px 0 44px; }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 16px;
+      color: #c1e4d1;
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 22px; height: 1px; background: currentColor; content: ""; }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(2.2rem, 5vw, 4.3rem); line-height: 1.05; letter-spacing: -.045em; }
+    .hero-copy { max-width: 650px; margin: 17px 0 27px; color: #d7e8df; font-size: 1.05rem; }
+    .search-wrap { position: relative; max-width: 600px; }
+    .search-wrap svg { position: absolute; top: 50%; left: 17px; width: 20px; height: 20px; color: #72817a; transform: translateY(-50%); pointer-events: none; }
+    .search-wrap input {
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 18px 14px 48px;
+      border: 1px solid rgba(255,255,255,.68);
+      border-radius: 14px;
+      outline: none;
+      background: #fffefa;
+      color: var(--ink);
+      box-shadow: 0 10px 24px rgba(10,32,28,.14);
+    }
+    .search-wrap input:focus { border-color: #9bd2b7; box-shadow: 0 0 0 4px rgba(155,210,183,.22); }
+    main { padding: 36px 0 64px; }
+    .intro-row { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
+    .section-kicker { margin: 0 0 4px; color: var(--teal); font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(1.55rem, 3vw, 2rem); letter-spacing: -.03em; }
+    .result-count { margin: 0; color: var(--muted); font-size: .9rem; }
+    .filters { display: flex; gap: 9px; overflow-x: auto; padding: 2px 0 12px; scrollbar-width: thin; }
+    .filter-btn {
+      flex: 0 0 auto;
+      padding: 9px 15px;
+      border: 1px solid #dce4dc;
+      border-radius: 999px;
+      background: rgba(255,254,250,.72);
+      color: #40554d;
+      font-size: .88rem;
+      font-weight: 700;
+      transition: background .18s, color .18s, border-color .18s, transform .18s;
+    }
+    .filter-btn:hover { border-color: #9dbbb0; transform: translateY(-1px); }
+    .filter-btn[aria-pressed="true"] { border-color: var(--green); background: var(--green); color: white; }
+    .fish-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 15px; }
+    .fish-card {
+      overflow: hidden;
+      border: 1px solid rgba(30,65,53,.08);
+      border-radius: var(--radius);
+      background: var(--paper);
+      box-shadow: 0 6px 20px rgba(23,55,47,.045);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .fish-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .card-image {
+      position: relative;
+      height: 220px;
+      overflow: hidden;
+      background: #e7eee8;
+    }
+    .card-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform .35s ease, opacity .25s ease;
+    }
+    .fish-card:hover .card-image img { transform: scale(1.04); }
+    .category-label {
+      position: absolute;
+      z-index: 1;
+      top: 14px;
+      left: 14px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.38);
+      border-radius: 999px;
+      background: rgba(17,57,49,.82);
+      color: white;
+      font-size: .7rem;
+      font-weight: 800;
+      letter-spacing: .02em;
+      backdrop-filter: blur(7px);
+    }
+    .card-content { padding: 18px 19px 19px; }
+    .card-content h3 { margin: 0 0 2px; font-size: 1.2rem; letter-spacing: -.025em; }
+    .scientific { margin: 0; color: var(--muted); font-size: .88rem; }
+    .card-bottom { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 17px; }
+    .diet-tag { display: inline-flex; align-items: center; gap: 6px; color: #46645a; font-size: .8rem; font-weight: 700; }
+    .diet-tag::before { width: 7px; height: 7px; border-radius: 50%; background: #77a66e; content: ""; }
+    .details-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #eaf2eb;
+      color: var(--green);
+      font-size: .82rem;
+      font-weight: 800;
+      transition: background .18s;
+    }
+    .details-btn:hover { background: #d9e9dc; }
+    .details-btn svg { width: 15px; height: 15px; }
+    .empty-state { grid-column: 1 / -1; padding: 48px 20px; border: 1px dashed #cbd6cc; border-radius: var(--radius); color: var(--muted); text-align: center; }
+    .empty-state strong { display: block; margin-bottom: 4px; color: var(--ink); font-size: 1.1rem; }
+    .field-note { margin: 28px 0 0; padding: 17px 19px; border-left: 3px solid #86ae85; border-radius: 0 12px 12px 0; background: #edf2e8; color: #52635a; font-size: .85rem; }
+    footer { padding: 0 0 28px; color: #68766f; font-size: .8rem; }
+    .modal-backdrop {
+      position: fixed;
+      z-index: 10;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(10,28,25,.66);
+      backdrop-filter: blur(5px);
+    }
+    .modal-backdrop[hidden] { display: none; }
+    .modal {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      width: min(920px, 100%);
+      max-height: min(86vh, 780px);
+      overflow: auto;
+      border-radius: 22px;
+      background: var(--paper);
+      box-shadow: 0 28px 80px rgba(0,0,0,.28);
+      animation: modal-in .2s ease-out;
+    }
+    @keyframes modal-in { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; transform: none; } }
+    .modal-photo { align-self: start; height: min(86vh, 680px); min-height: 0; background: #132c27; position: sticky; top: 0; }
+    .modal-photo img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: cover; object-position: center; }
+    .modal-content { padding: 35px 34px 30px; }
+    .modal-content h2 { margin: 2px 36px 2px 0; }
+    .modal-content .scientific { margin-bottom: 22px; }
+    .modal-close {
+      position: absolute;
+      z-index: 1;
+      top: 14px;
+      right: 14px;
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid #dfe6de;
+      border-radius: 50%;
+      background: rgba(255,254,250,.94);
+      color: var(--ink);
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+    .modal-close:hover { background: #edf2e8; }
+    .detail-list { display: grid; gap: 16px; }
+    .detail-item { padding-top: 13px; border-top: 1px solid var(--line); }
+    .detail-item h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 4px; color: var(--green); font-size: .85rem; }
+    .detail-item h3 svg { width: 16px; height: 16px; flex: none; }
+    .detail-item p { margin: 0; color: #53625b; font-size: .88rem; }
+    .modal-tip { margin: 19px 0 0; color: #718078; font-size: .75rem; }
+    @media (max-width: 850px) {
+      .fish-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .modal { grid-template-columns: 1fr; max-width: 650px; }
+      .modal-photo { position: relative; top: auto; height: min(58vh, 460px); min-height: 0; }
+      .modal-photo img { min-height: 0; }
+      .modal-content { padding: 25px 24px; }
+      .detail-list { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 13px 18px; }
+    }
+    @media (max-width: 560px) {
+      .hero-inner, main, footer { width: min(100% - 30px, 1160px); }
+      .hero-inner { padding: 42px 0 32px; }
+      .hero-copy { font-size: .96rem; }
+      main { padding-top: 28px; }
+      .intro-row { align-items: start; flex-direction: column; gap: 5px; }
+      .fish-grid { grid-template-columns: 1fr; gap: 14px; }
+      .card-image { height: 225px; }
+      .filter-btn { padding: 8px 12px; font-size: .82rem; }
+      .modal-backdrop { padding: 10px; }
+      .modal { max-height: 92vh; border-radius: 17px; }
+      .modal-photo { height: min(58vh, 420px); }
+      .modal-content { padding: 22px 18px; }
+      .detail-list { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">Guia de campo · Santa Catarina</p>
+      <h1>Guia de Peixes —<br>Lagoa do Sombrio (SC)</h1>
+      <p class="hero-copy">Uma janela para a biodiversidade de uma das maiores lagoas catarinenses. Conheça as espécies, seus habitats e como pescar com mais consciência.</p>
+      <label class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8"></circle><path d="m16 16 4.5 4.5"></path></svg>
+        <input id="search" type="search" placeholder="Buscar por nome popular ou científico..." autocomplete="off" aria-label="Buscar espécies por nome popular ou científico">
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <section aria-labelledby="catalog-title">
+      <div class="intro-row">
+        <div>
+          <p class="section-kicker">Explore a fauna local</p>
+          <h2 id="catalog-title">Espécies da lagoa</h2>
+        </div>
+        <p class="result-count" id="result-count" aria-live="polite"></p>
+      </div>
+      <nav class="filters" aria-label="Filtrar espécies por categoria">
+        <button class="filter-btn" type="button" data-filter="Todos" aria-pressed="true">Todos</button>
+        <button class="filter-btn" type="button" data-filter="Predadores / Isca Artificial" aria-pressed="false">Predadores / Isca Artificial</button>
+        <button class="filter-btn" type="button" data-filter="Peixes de Fundo / Escama" aria-pressed="false">Peixes de Fundo / Escama</button>
+        <button class="filter-btn" type="button" data-filter="Peixes de Couro" aria-pressed="false">Peixes de Couro</button>
+        <button class="filter-btn" type="button" data-filter="Água Salobra / Estuarinos" aria-pressed="false">Água Salobra / Estuarinos</button>
+      </nav>
+      <div class="fish-grid" id="fish-grid" aria-live="polite"></div>
+      <aside class="field-note">
+        <strong>Nota de campo:</strong> este guia reúne espécies associadas à Lagoa do Sombrio e aos ambientes conectados, onde a salinidade e a ocorrência podem variar. Os tamanhos e períodos são referências gerais, não levantamentos específicos da lagoa. Confirme identificação e regras vigentes de defeso, licença e tamanho mínimo junto aos órgãos ambientais antes de pescar.
+      </aside>
+    </section>
+  </main>
+  <footer>Guia educativo para observação e pesca responsável · Lagoa do Sombrio, Santa Catarina</footer>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <section class="modal" id="details-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-scientific">
+      <button class="modal-close" id="modal-close" type="button" aria-label="Fechar detalhes">&times;</button>
+      <div class="modal-photo">
+        <img id="modal-image" data-fish-id="" alt="" onerror="handlePhotoError(this)">
+      </div>
+      <div class="modal-content">
+        <p class="section-kicker">Ficha da espécie</p>
+        <h2 id="modal-title"></h2>
+        <p class="scientific" id="modal-scientific"></p>
+        <div class="detail-list" id="modal-details"></div>
+        <p class="modal-tip">As recomendações são informativas. Pratique captura e soltura com cuidado e respeite a legislação local.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // Os dados são referências de campo para a lagoa e ambientes conectados.
+    const species = [
+      {
+        id: "traira", name: "Traíra", scientific: "Hoplias malabaricus", diet: "Carnívoro",
+        category: "Predadores / Isca Artificial",
+        image: "https://upload.wikimedia.org/wikipedia/commons/a/ac/Tararira_%28Hoplias_malabaricus%29%2C_Uruguay%2C_2020.jpg",
+        guide: [
+          "Procure margens rasas, vegetação, aguapés e galhadas. Comece em 0,3–1,5 m; costuma emboscar presas junto à margem, não no centro do canal.",
+          "Naturais: peixe pequeno ou minhoca, onde permitido. Artificiais: spinnerbait, soft bait antienrosco e plug de meia-água; trabalhe rente à cobertura.",
+          "Vara 5'6\"–6'6\" média, linha 12–20 lb. Use líder de nylon/fluorocarbono 0,60–0,80 mm ou aço flexível de 20–30 lb (15–25 cm); anzol 2/0–5/0 conforme a isca.",
+          "Arremesse paralelo à margem e varie pausas. Fisgue firme após sentir peso, sem dar tranco exagerado. Retire com alicate/ boga grip; dentes cortam e espinhos das nadadeiras também podem ferir.",
+          "Tende a responder melhor com água morna, cedo ou no fim da tarde. Água levemente turva pode favorecer a emboscada; vento forte atrapalha. Barranco com acesso à vegetação costuma bastar; embarcação ajuda a cobrir margens.",
+          "Nativa. Não há tamanho mínimo ou defeso específico da lagoa confirmado aqui; verifique regras atuais de SC e da modalidade antes de reter. Solte peixes fora da medida e não danifique a vegetação marginal."
+        ]
+      },
+      {
+        id: "robalo-flecha", name: "Robalo-flecha", scientific: "Centropomus undecimalis", diet: "Carnívoro / piscívoro",
+        category: "Água Salobra / Estuarinos",
+        image: "https://paginasdabio.ufpr.br/wp-content/uploads/2023/08/image-30.jpg",
+        guide: [
+          "Busque canais, desembocaduras e estruturas com corrente ou água salobra; teste bordas e 1–3 m, ajustando ao fundo. A ocorrência dentro da lagoa pode ser ocasional; priorize canais conectados.",
+          "Naturais: camarão e peixe pequeno vivos ou frescos, se permitido. Artificiais: plugs, jigs e soft baits de tamanho compatível; passe pelas bordas de corrente e estruturas.",
+          "Vara 6'6\"–7' média a média-pesada, multifilamento 12–20 lb; líder fluorocarbono 0,40–0,60 mm, 60–100 cm, sem aço. Anzol 1/0–4/0 para isca natural; confira o tamanho do plug.",
+          "Trabalhe a favor da corrente e alterne profundidade e velocidade. Fisgue com firmeza quando a linha carregar; evite folga. Use alicate: opérculos e raios das nadadeiras podem cortar/ferir.",
+          "Procure água em movimento, ao amanhecer ou entardecer; calor moderado costuma ajudar. Turvação leve pode aumentar ataques, mas água muito barrenta dificulta localizar a isca. Barranco em canal acessível funciona; embarcado amplia a busca.",
+          "Nativo. Tamanho mínimo, defeso e regras de captura de robalos podem variar por norma, área e modalidade; confirme a regra vigente em SC antes de reter. Meça corretamente e solte exemplares fora do limite."
+        ]
+      },
+      {
+        id: "robalo-peva", name: "Robalo-peva", scientific: "Centropomus parallelus", diet: "Carnívoro / piscívoro",
+        category: "Água Salobra / Estuarinos",
+        image: "https://s2.glbimg.com/KcCLvPjxIQxlxINbgOZ3l9zmtX0=/s.glbimg.com/jo/g1/f/original/2015/02/05/520.jpg",
+        guide: [
+          "Tente canais abrigados, desembocaduras e margens com raízes ou galhos; comece na borda do canal e em 0,5–2 m. A presença depende da conexão com água salobra.",
+          "Naturais: camarão e peixe pequeno, se autorizados. Artificiais: jig leve, soft bait e plug pequeno; lance perto de estruturas e faça pausas.",
+          "Vara 6'–6'6\" média, multifilamento 8–15 lb; líder fluorocarbono 0,33–0,50 mm, 50–80 cm, sem aço. Anzol 1–2/0 para camarão/peixe; ajuste ao tamanho da isca.",
+          "Varie recolhimento e profundidade junto à estrutura. Fisgue ao sentir a linha pesar, mantendo contato para não deixar o peixe entrar nos galhos. Use alicate e evite tocar nos raios duros das nadadeiras.",
+          "Corrente ou maré em movimento e começo/fim do dia são bons pontos de partida; água clara a levemente turva. Vento lateral forte prejudica arremessos. Barranco de canal é prático; embarcado permite acompanhar bordas e corrente.",
+          "Nativo. Confirme tamanho mínimo, defeso e eventuais restrições atuais para robalo em SC; não retenha sem verificar a norma aplicável à área e à modalidade. Faça captura e soltura rápida."
+        ]
+      },
+      {
+        id: "tainha", name: "Tainha", scientific: "Mugil liza", diet: "Detritívoro / onívoro",
+        category: "Água Salobra / Estuarinos",
+        image: "https://media.istockphoto.com/id/2161716669/pt/foto/chelon-labrosus-fish.jpg?s=612x612&w=0&k=20&c=PV98a6X8XJpu7Cw6rEmSK6DNim3kC8Xt1Igiq7sggik=",
+        guide: [
+          "Localize cardumes em águas abertas rasas, margens e canais; observe a superfície e teste 0,5–2 m ou perto do fundo. A posição muda com salinidade e deslocamentos.",
+          "Naturais: massa, pão, algas ou pequenas porções de alimento, conforme permitido. A tainha raramente persegue artificiais; evite iscas grandes e muita ceva.",
+          "Vara leve com boia, 10'–14' para barranco ou 6'–7' embarcado; monofilamento 6–10 lb, líder 0,20–0,28 mm. Anzol pequeno #8–#4; sem aço.",
+          "Apresente a isca sem assustar o cardume. Espere a boia afundar ou a linha correr e fisgue suave. Use puçá; não segure pelas guelras nem aperte o corpo coberto de muco.",
+          "Cardumes podem passar em períodos migratórios, especialmente outono/inverno no litoral; na lagoa, confirme ocorrência. Manhã calma facilita observar; vento encrespando e água turva dificultam. Barranco é bom com cardume perto; embarcado só onde permitido e sem cercá-lo.",
+          "Nativa. A pesca da tainha em SC tem regras sazonais por local, período, petrecho e modalidade; tamanho mínimo/defeso pode depender da norma vigente. Consulte o calendário oficial antes de pescar ou reter."
+        ]
+      },
+      {
+        id: "tilapia", name: "Tilápia-do-nilo", scientific: "Oreochromis niloticus", diet: "Onívoro",
+        category: "Peixes de Fundo / Escama",
+        image: "https://upload.wikimedia.org/wikipedia/commons/b/b3/Oreochromis-niloticus-Nairobi.JPG",
+        guide: [
+          "Procure águas quentes e calmas, margens vegetadas e enseadas rasas; teste 0,5–2 m, perto de plantas ou fundo. Prefere abrigo marginal a canal profundo.",
+          "Naturais: milho, massa, pão e minhoca. Artificiais: microjigs e soft baits pequenos; use apresentação discreta e lenta.",
+          "Vara 5'–6'6\" leve, linha 4–8 lb ou mono 0,20–0,28 mm; líder fino 0,20–0,25 mm, sem aço. Anzol #8–#4 para massa/milho.",
+          "Boia pequena ou montagem de fundo leve. Espere a boia afundar ou a linha esticar antes de fisgar de leve. Cuidado com os raios espinhosos das nadadeiras; apoie o peixe com mão molhada.",
+          "Água morna e períodos ensolarados favorecem atividade; tente manhã e fim de tarde. Turvação leve pede isca mais visível; vento forte atrapalha a boia. Barranco costuma ser suficiente; embarcado ajuda a alcançar enseadas.",
+          "Exótica no Brasil. Não há defeso ou tamanho mínimo específico da lagoa confirmado aqui; verifique regras locais e licença. Não transporte, introduza ou solte tilápias em novos ambientes."
+        ]
+      },
+      {
+        id: "jundia", name: "Jundiá", scientific: "Rhamdia quelen", diet: "Onívoro",
+        category: "Peixes de Couro",
+        image: "https://inaturalist-open-data.s3.amazonaws.com/photos/2425800/medium.jpg",
+        guide: [
+          "Fundo lodoso, remansos e canais com galhos; pesque no fundo em 1–4 m, começando perto de abrigo e da margem. Pode sair do esconderijo ao escurecer.",
+          "Naturais: minhoca, insetos e pequenos pedaços de peixe, se permitidos. Artificiais: soft bait pequeno ou jig junto ao fundo; naturais tendem a ser mais consistentes.",
+          "Vara 6'–7' média, linha 10–17 lb; líder mono/fluorocarbono 0,30–0,40 mm. Anzol #2–2/0 conforme a isca; sem aço.",
+          "Use chumbada apenas suficiente para manter contato com o fundo. Aguarde puxada contínua e fisgue firme. Manuseie com mão molhada e alicate; espinhos das peitorais e dorsal podem perfurar.",
+          "Tente entardecer/noite e água mais quente; após chuva, água muito turva pode reduzir a atividade. Vento moderado não impede pesca de fundo, mas dificulta sentir toques. Barranco em remanso é bom; embarcado ajuda a localizar canais.",
+          "Nativo. Não há tamanho mínimo/defeso específico da lagoa confirmado nesta ficha; confira normas vigentes de SC e da bacia antes de reter. Evite pesca sobre concentrações reprodutivas e solte com cuidado."
+        ]
+      },
+      {
+        id: "bagre-branco", name: "Bagre-branco / bagre-marinho", scientific: "Genidens barbus", diet: "Onívoro / bentônico",
+        category: "Água Salobra / Estuarinos",
+        image: "https://static.wixstatic.com/media/1fafda_8b7bfcbe1cf0410d8ba115636c194070~mv2.jpg/v1/fill/w_1396,h_1047,al_c,q_85/genidens-barbus-instituto-ecofaxina.jpg",
+        guide: [
+          "Procure fundos de canais e setores salobros/conectados, geralmente 2–6 m ou onde o canal aprofundar. Pesque junto ao fundo; a presença na lagoa pode variar.",
+          "Naturais: camarão, molusco e peixe em pedaço, somente se permitidos. Artificiais: jig pesado ou soft bait de fundo, com menor previsibilidade.",
+          "Vara 6'6\"–8' média-pesada, linha 17–25 lb; líder mono 0,45–0,60 mm. Anzol circular 2/0–5/0 facilita soltura; sem aço.",
+          "Mantenha a linha esticada e espere a puxada firmar antes de recolher. Nunca pegue pelas guelras nem toque nos ferrões dorsal/peitorais: use alicate longo e puçá.",
+          "Corrente moderada e manhã/fim de tarde ajudam a localizar alimento; água muito turva e vento forte dificultam controle do fundo. Barranco de canal é possível; embarcado é melhor para sondar profundidades, respeitando segurança.",
+          "Nativo. Pode estar sujeito a proteção/restrições de conservação; confirme a lista e a norma vigente em SC. Sem confirmação oficial de tamanho mínimo/defeso local, pratique soltura imediata e não retenha até verificar a legalidade."
+        ]
+      },
+      {
+        id: "saicanga", name: "Saicanga / denticão", scientific: "Oligosarcus jenynsii", diet: "Carnívoro",
+        category: "Predadores / Isca Artificial",
+        image: "https://i.ytimg.com/vi/-wlA8xTLbmY/maxresdefault.jpg",
+        guide: [
+          "Procure cardumes de peixes pequenos em margens abertas, vegetação rala e canais rasos; comece em 0,5–2 m. Pode caçar em água aberta, não só na margem.",
+          "Artificiais: spinner pequeno, microplug, colher ou jig. Naturais: peixe pequeno apenas onde permitido. Combine o tamanho da isca com a presa observada.",
+          "Vara ultraleve 5'–6'6\", linha 4–8 lb; líder fluorocarbono 0,25–0,35 mm, sem aço. Anzol #8–#2 ou garateia pequena; sem farpa reduz dano.",
+          "Recolha continuamente e varie velocidade. Fisgue curto ao sentir o ataque; dentes pequenos ainda podem cortar. Use alicate, não coloque dedos na boca e confirme a identificação antes de reter.",
+          "Atividade pode subir em água morna e com forrageiros; amanhecer e fim de tarde são bons. Água levemente turva pode ajudar, mas turvação forte reduz visão. Barranco funciona em cardumes próximos; embarcado amplia a busca.",
+          "Nativo; o gênero Astyanax inclui espécies nativas. Não há medida mínima/defeso único confirmado para o grupo na lagoa; identifique antes de reter ou usar como isca e confira regras locais."
+        ]
+      },
+      {
+        id: "cara", name: "Cará / acará", scientific: "Geophagus brasiliensis", diet: "Onívoro",
+        category: "Peixes de Fundo / Escama",
+        image: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Geophagus_brasiliensis.jpg",
+        guide: [
+          "Margens rasas, vegetação e fundos de areia/lama; teste 0,5–2 m, perto do fundo. Costuma forragear junto à margem, não precisa buscar canal fundo.",
+          "Naturais: minhoca, pequenos crustáceos e massa. Artificiais: microjig ou soft bait pequeno no fundo; use apresentação leve.",
+          "Vara 5'–6'6\" leve, linha 4–10 lb; líder 0,20–0,30 mm, sem aço. Anzol #8–#2 para iscas pequenas.",
+          "Use boia ou chumbada mínima. Espere a linha esticar e fisgue curto. Cuidado com os raios das nadadeiras; não aperte o peixe e evite mexer em ninhos defendidos.",
+          "Água morna e manhã/fim de tarde costumam ser produtivas. Turvação leve é aceitável; vento forte atrapalha boia. Barranco é ideal em margem protegida; embarcado raramente é necessário.",
+          "Nativo. Não há tamanho mínimo/defeso da lagoa confirmado nesta ficha; consulte regra vigente em SC antes de reter. Na reprodução, evite peixes defendendo ninho e devolva rapidamente."
+        ]
+      },
+      {
+        id: "lambari", name: "Lambari", scientific: "Astyanax spp.", diet: "Onívoro",
+        category: "Peixes de Fundo / Escama",
+        image: "https://blog.santapesca.com.br/wp-content/uploads/2023/10/original.jpg",
+        guide: [
+          "Cardumes em margens rasas, vegetação e água aberta protegida; procure na superfície e em 0,3–1,5 m. Prefere beirada/enseada a canal fundo.",
+          "Naturais: massa, pão, insetos e pedacinho de minhoca. Artificiais: microjig ou microspinner muito pequeno; ceva pouca para não dispersar o cardume.",
+          "Vara telescópica 3'–5' ou ultraleve, linha 2–6 lb/mono 0,12–0,18 mm; líder fino se necessário, sem aço. Anzol #14–#10.",
+          "Boia pequena e montagem leve. Fisgue ao afundar da boia, com toque curto. Use alicate pequeno e mão molhada; devolva peixes que não for usar e não os deixe expostos ao sol.",
+          "Pode pescar o ano todo; manhã calma e água clara a levemente turva facilitam localizar cardumes. Vento forte dispersa a ceva e dificulta a boia. Barranco é suficiente; embarcação não costuma ser necessária.",
+          "Nativo; Astyanax spp. reúne várias espécies. Não há tamanho mínimo/defeso único confirmado para o grupo na lagoa; identifique antes de reter ou usar como isca e confira regras locais."
+        ]
+      },
+      {
+        id: "carpa", name: "Carpa-comum", scientific: "Cyprinus carpio", diet: "Onívoro / bentívoro",
+        category: "Peixes de Fundo / Escama",
+        image: "https://upload.wikimedia.org/wikipedia/commons/9/9b/Cyprinus_carpio.jpeg",
+        guide: [
+          "Procure fundo lodoso, enseadas calmas e margens com plantas; teste 1–4 m junto ao fundo. Costuma remexer o substrato, não precisa ficar no canal mais fundo.",
+          "Naturais: milho, massa, pão e minhoca. Artificiais: milho artificial, massa moldável ou soft bait pequeno; use ceva com moderação.",
+          "Vara 10'–12' de ação média ou 6'6\"–7' embarcado, linha 12–20 lb; líder 0,35–0,45 mm. Anzol forte #4–1/0; sem aço. Use montagem segura que libere o chumbo se enroscar.",
+          "Deixe a isca no fundo e mantenha a linha semiesticada; espere a corrida firmar antes de recolher. Use puçá grande e nunca levante peixe pesado pela linha; manuseie com cuidado.",
+          "Água morna e períodos de pouco movimento, cedo ou no fim da tarde. Turvação leve não impede a pesca de fundo; vento forte dificulta arremesso. Barranco com espaço é adequado; embarcado ajuda a sondar o fundo.",
+          "Exótica. Não há medida mínima/defeso específico da lagoa confirmado; verifique regras locais. Nunca transporte, introduza ou solte carpas em outro corpo d'água; contenha a ceva para não alterar o ambiente."
+        ]
+      },
+      {
+        id: "corvina", name: "Corvina", scientific: "Micropogonias furnieri", diet: "Carnívoro / bentônico",
+        category: "Água Salobra / Estuarinos",
+        image: "https://feedfood.com.br/wp-content/uploads/2026/10/Peixe-prateado-em-maos-sobre-a-agua.png-1024x552.webp",
+        guide: [
+          "Prefere fundo de areia/lama em canais e setores salobros conectados; teste o fundo em 2–6 m ou nas depressões. A ocorrência dentro da lagoa depende da conexão e salinidade.",
+          "Naturais: camarão, minhoca de praia e peixe pequeno, se permitidos. Artificiais: jig/soft bait junto ao fundo. Use peso apenas para manter contato com o substrato.",
+          "Vara 6'6\"–8' média, linha 12–20 lb; líder fluorocarbono/mono 0,35–0,50 mm, 60–100 cm. Anzol 1/0–3/0; sem aço.",
+          "Sinta o fundo sem arrastar demais. Aguarde a puxada contínua e fisgue firme; use alicate para retirar o anzol. Raios das nadadeiras podem espetar; evite segurar pelas guelras.",
+          "Amanhecer e entardecer, água em movimento e condições estáveis são bons pontos de partida; vento forte dificulta contato com o fundo. Turvação leve é tolerável. Barranco em canal acessível funciona; embarcado facilita encontrar depressões.",
+          "Nativa costeira. Confirme ocorrência, tamanho mínimo, defeso e permissão de pesca para esta lagoa junto às normas atuais de SC; não presuma que regra costeira autorize captura em água interior. Solte se houver dúvida."
+        ]
+      }
+    ];
+
+    // Links diretos para fotos verticais do modal. Deixe "" para usar ./img/modal/<id>.jpg.
+    // Exemplo: "traira": "https://exemplo.com/foto-vertical-traira.jpg",
+    const modalPhotos = {
+      "traira": "https://i.pinimg.com/736x/20/6a/be/206abe049cb70fdea9ea4e2cebc03c64.jpg",
+      "robalo-flecha": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXD6SrgeBbbxQ_mmFP6gCEjVEwwsmrhY56KLt-dBq4u9XE2OWiElD7eLSR&s=10",
+      "robalo-peva": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS_nm3QN1cVhsELUJ7uDjxRDKhPWwvWIgHTZfeLwTy3gNSd2NN4aGLety--&s=10",
+      "tainha": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpLywoDzTzQv04yBDTFhqY-QhMRg66g4ybZ5T0ZgbbQqSS12lD6A_L0gU&s=10",
+      "tilapia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkKQ1-YlKzmBWNzVrvlPnWgHrrGb_6DgZWOspJT6hDVOtd_oIfvj8IJz4&s=10",
+      "jundia": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGngzxGHLsUz1BEIi5MppKncecMS8kLbWx4QawkGjUyywUhsGJ6-3W4D5q&s=10",
+      "bagre-branco": "https://s2-oglobo.glbimg.com/J_dUcEZuBXLb8XuPdET4NFvtUP4=/1080x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_da025474c0c44edd99332dddb09cabe8/internal_photos/bs/2023/3/Z/GlhBmgT8WA8PErW1tleA/347411346-197590246570665-353659143076215535-n.jpg",
+      "saicanga": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5IMnWFYtgomKEQ1DDJ3RjAEAwIjxrBsHq-HRi2tdjJsOBx7mGaBxLzhB3&s=10",
+      "cara": "https://www.turmadobigua.com.br/forum/uploads/monthly_2018_01/5a676a8f9dc4e_WhatsAppImage2018-01-23at14_55_17.jpeg.aa1945377ca971d5a6d87bbad52a6f80.jpeg",
+      "lambari": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkUn10SdcLZ1Sf5uur_7Ij9JQ2DMN4NgGe-0mFoZsGVG_hf6faGu777iw&s=10",
+      "carpa": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkJYhGo4deDfphjOLrP7sTCHDY5lhd6vHwDzeTVarG9uOigHczaO0Zsqvf&s=10",
+      "corvina": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT76OpRJiJnyE3mEXvLCXQMCxXT8Hm11EbIWK--nO4llyt_jR9x9hNnRI3Q&s=10"
+    };
+
+    const grid = document.getElementById("fish-grid");
+    const searchInput = document.getElementById("search");
+    const countLabel = document.getElementById("result-count");
+    const filterButtons = [...document.querySelectorAll(".filter-btn")];
+    const backdrop = document.getElementById("modal-backdrop");
+    const modalClose = document.getElementById("modal-close");
+    let activeFilter = "Todos";
+    let lastFocusedElement = null;
+    const genericFishPhoto = "https://upload.wikimedia.org/wikipedia/commons/a/ac/Tararira_%28Hoplias_malabaricus%29%2C_Uruguay%2C_2020.jpg";
+    function setModalPhoto(url) {
+      const modalImage = document.getElementById("modal-image");
+      delete modalImage.dataset.fallbackStage;
+      modalImage.hidden = false;
+      modalImage.src = url;
+    }
+
+    function handlePhotoError(imgElement) {
+      const fish = species.find((item) => item.id === imgElement.dataset.fishId);
+      if (!fish) {
+        imgElement.hidden = true;
+        return;
+      }
+
+      const stage = Number(imgElement.dataset.fallbackStage || 0);
+      if (imgElement.dataset.imageRole === "modal" && stage === 0) {
+        imgElement.dataset.fallbackStage = "1";
+        imgElement.src = fish.image;
+        return;
+      }
+
+      if (imgElement.dataset.imageRole === "modal" && stage === 1) {
+        imgElement.dataset.fallbackStage = "2";
+        imgElement.src = genericFishPhoto;
+        return;
+      }
+
+      if (stage === 0 && fish.image !== genericFishPhoto) {
+        imgElement.dataset.fallbackStage = "1";
+        imgElement.alt = "Fotografia real de um peixe (imagem de reserva)";
+        imgElement.src = genericFishPhoto;
+        return;
+      }
+
+      if (stage < 2) {
+        imgElement.dataset.fallbackStage = "2";
+        imgElement.alt = `Fotografia de ${fish.name} (${fish.scientific})`;
+        imgElement.src = `./img/${fish.id}.jpg`;
+        return;
+      }
+
+      imgElement.hidden = true;
+      imgElement.parentElement.classList.add("photo-missing");
+    }
+
+    function visibleSpecies() {
+      const query = searchInput.value.trim().toLocaleLowerCase("pt-BR");
+      return species.filter((fish) => {
+        const matchesFilter = activeFilter === "Todos" || fish.category === activeFilter;
+        const matchesSearch = !query || `${fish.name} ${fish.scientific} ${fish.category}`.toLocaleLowerCase("pt-BR").includes(query);
+        return matchesFilter && matchesSearch;
+      });
+    }
+
+    function render() {
+      const results = visibleSpecies();
+      countLabel.textContent = `${results.length} ${results.length === 1 ? "espécie encontrada" : "espécies encontradas"}`;
+      if (!results.length) {
+        grid.innerHTML = '<div class="empty-state"><strong>Nenhum peixe encontrado</strong>Tente outro nome ou escolha uma categoria diferente.</div>';
+        return;
+      }
+      grid.innerHTML = results.map((fish) => `
+        <article class="fish-card">
+          <div class="card-image">
+            <img src="${fish.image}" data-image-role="card" data-fish-id="${fish.id}" alt="Fotografia de ${fish.name} (${fish.scientific})" loading="lazy" onerror="handlePhotoError(this)">
+            <span class="category-label">${fish.category}</span>
+          </div>
+          <div class="card-content">
+            <h3>${fish.name}</h3>
+            <p class="scientific"><i>${fish.scientific}</i></p>
+            <div class="card-bottom">
+              <span class="diet-tag">${fish.diet}</span>
+              <button class="details-btn" type="button" data-id="${fish.id}" aria-label="Ver detalhes de ${fish.name}">
+                Ver detalhes
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+              </button>
+            </div>
+          </div>
+        </article>`).join("");
+    }
+
+    function openDetails(fish) {
+      if (!fish) return;
+      lastFocusedElement = document.activeElement;
+      document.getElementById("modal-title").textContent = fish.name;
+      document.getElementById("modal-scientific").innerHTML = `<i>${fish.scientific}</i> · ${fish.diet}`;
+      const modalImage = document.getElementById("modal-image");
+      modalImage.dataset.imageRole = "modal";
+      modalImage.dataset.fishId = fish.id;
+      modalImage.alt = `Fotografia ampliada de ${fish.name} (${fish.scientific})`;
+      const verticalPhoto = modalPhotos[fish.id] || `./img/modal/${fish.id}.jpg`;
+      setModalPhoto(verticalPhoto);
+
+      const headings = [
+        "1. Onde encontrar na lagoa",
+        "2. Melhores iscas naturais e artificiais",
+        "3. Equipamento e montagem ideal",
+        "4. Técnica, fisgada e cuidados",
+        "5. Melhores condições locais",
+        "6. Status, regras e conservação"
+      ];
+      document.getElementById("modal-details").innerHTML = fish.guide.map((text, index) =>
+        `<div class="detail-item"><h3>${headings[index]}</h3><p>${text}</p></div>`
+      ).join("");
+      backdrop.hidden = false;
+      document.body.style.overflow = "hidden";
+      modalClose.focus();
+    }
+
+    function closeDetails() {
+      if (backdrop.hidden) return;
+      backdrop.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocusedElement) lastFocusedElement.focus();
+    }
+
+    grid.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-id]");
+      if (button) openDetails(species.find((fish) => fish.id === button.dataset.id));
+    });
+    searchInput.addEventListener("input", render);
+    filterButtons.forEach((button) => button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+      filterButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+      render();
+    }));
+    modalClose.addEventListener("click", closeDetails);
+    backdrop.addEventListener("click", (event) => { if (event.target === backdrop) closeDetails(); });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeDetails();
+      if (event.key === "Tab" && !backdrop.hidden) {
+        const focusable = [...backdrop.querySelectorAll("button:not([disabled]), [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")];
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>
